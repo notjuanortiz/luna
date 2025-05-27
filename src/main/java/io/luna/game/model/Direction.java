@@ -1,7 +1,7 @@
 package io.luna.game.model;
 
 import com.google.common.collect.ImmutableList;
-import io.luna.game.model.mob.WalkingQueue.Step;
+import io.luna.game.model.mob.Step;
 
 import java.util.Set;
 

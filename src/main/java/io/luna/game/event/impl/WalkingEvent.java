@@ -1,7 +1,7 @@
 package io.luna.game.event.impl;
 
 import io.luna.game.model.mob.Player;
-import io.luna.game.model.mob.WalkingQueue.Step;
+import io.luna.game.model.mob.Step;
 
 import java.util.Deque;
 

@@ -3,7 +3,7 @@ package io.luna.game.model;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.Range;
 import io.luna.game.model.chunk.Chunk;
-import io.luna.game.model.mob.WalkingQueue.Step;
+import io.luna.game.model.mob.Step;
 
 import java.util.Comparator;
 import java.util.Objects;

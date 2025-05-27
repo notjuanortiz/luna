@@ -3,7 +3,7 @@ package io.luna.net.msg.in;
 import io.luna.game.event.impl.WalkingEvent;
 import io.luna.game.model.mob.Player;
 import io.luna.game.model.mob.WalkingQueue;
-import io.luna.game.model.mob.WalkingQueue.Step;
+import io.luna.game.model.mob.Step;
 import io.luna.net.codec.ByteMessage;
 import io.luna.net.codec.ByteOrder;
 import io.luna.net.codec.ValueType;

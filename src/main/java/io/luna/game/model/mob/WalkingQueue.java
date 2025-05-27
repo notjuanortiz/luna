@@ -1,6 +1,5 @@
 package io.luna.game.model.mob;
 
-import com.google.common.base.MoreObjects;
 import com.google.common.util.concurrent.ListenableFuture;
 import io.luna.game.model.Direction;
 import io.luna.game.model.Entity;
@@ -265,7 +264,7 @@ public final class WalkingQueue {
      */
     public void walkUntilReached(Entity target) {
         Deque<Step> newPath = new ArrayDeque<>();
-        Deque<Position> path = astarPathfinder.find(mob.getPosition(), target.getPosition());
+        Deque<Position> path = pathfinder.find(mob.getPosition(), target.getPosition());
         Position lastPosition = mob.getPosition();
         for (; ; ) {
             Position nextPosition = path.poll();
