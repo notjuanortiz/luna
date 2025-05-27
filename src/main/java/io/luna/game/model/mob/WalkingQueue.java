@@ -9,6 +9,7 @@ import io.luna.game.model.Region;
 import io.luna.game.model.collision.CollisionManager;
 import io.luna.game.model.path.AStarPathfindingAlgorithm;
 import io.luna.game.model.path.EuclideanHeuristic;
+import io.luna.game.model.path.PathfindingAlgorithm;
 import io.luna.game.model.path.SimplePathfindingAlgorithm;
 import io.luna.util.RandomUtils;
 import org.apache.logging.log4j.LogManager;
@@ -35,87 +36,12 @@ public final class WalkingQueue {
     private static final Logger logger = LogManager.getLogger();
 
     /**
-     * A model representing a step in the walking queue.
-     */
-    public static final class Step {
-
-        /**
-         * The x coordinate.
-         */
-        private final int x;
-
-        /**
-         * The y coordinate.
-         */
-        private final int y;
-
-        /**
-         * Creates a new {@link Step}.
-         *
-         * @param x The x coordinate.
-         * @param y The y coordinate.
-         */
-        public Step(int x, int y) {
-            this.x = x;
-            this.y = y;
-        }
-
-        /**
-         * Creates a new {@link Step}.
-         *
-         * @param position The position.
-         */
-        public Step(Position position) {
-            this(position.getX(), position.getY());
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (obj instanceof Step) {
-                Step other = (Step) obj;
-                return x == other.x && y == other.y;
-            }
-            return false;
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(x, y);
-        }
-
-        @Override
-        public String toString() {
-            return MoreObjects.toStringHelper(this)
-                    .add("x", x)
-                    .add("y", y)
-                    .toString();
-        }
-
-        /**
-         * @return The x coordinate.
-         */
-        public int getX() {
-            return x;
-        }
-
-        /**
-         * @return The y coordinate.
-         */
-        public int getY() {
-            return y;
-        }
-    }
-
-    /**
-     * A deque of current steps.
+     * A double-ended Queue of current steps.
      */
     private final Deque<Step> current = new ArrayDeque<>();
 
     /**
-     * A deque of previous steps.
+     * A double-ended Queue of previous steps. This trails the
      */
     private final Deque<Step> previous = new ArrayDeque<>();
 
@@ -124,15 +50,7 @@ public final class WalkingQueue {
      */
     private final CollisionManager collisionManager;
 
-    /**
-     * The simple pathfinder.
-     */
-    private final SimplePathfindingAlgorithm simplePathfinder;
-
-    /**
-     * The A* pathfinder.
-     */
-    private final AStarPathfindingAlgorithm astarPathfinder;
+    private final PathfindingAlgorithm pathfinder;
 
     /**
      * The mob.
@@ -162,8 +80,12 @@ public final class WalkingQueue {
     public WalkingQueue(Mob mob) {
         this.mob = mob;
         collisionManager = mob.getWorld().getCollisionManager();
-        simplePathfinder = new SimplePathfindingAlgorithm(collisionManager);
-        astarPathfinder = new AStarPathfindingAlgorithm(collisionManager, new EuclideanHeuristic());
+
+        if (mob instanceof Player) {
+            pathfinder = new AStarPathfindingAlgorithm(collisionManager, new EuclideanHeuristic());
+        } else {
+            pathfinder = new SimplePathfindingAlgorithm(collisionManager);
+        }
     }
 
     /**
@@ -506,8 +428,7 @@ public final class WalkingQueue {
      * @return The path.
      */
     private Deque<Step> findPath(Position target) {
-        Deque<Position> positionPath = mob.getType() == EntityType.PLAYER ? astarPathfinder.find(mob.getPosition(), target) :
-                simplePathfinder.find(mob.getPosition(), target);
+        Deque<Position> positionPath = pathfinder.find(mob.getPosition(), target);
         Deque<Step> stepPath = new ArrayDeque<>(positionPath.size());
         for (; ; ) {
             // TODO remove step class?
